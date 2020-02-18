@@ -54,11 +54,6 @@ namespace Containers
             static void deepDelete(Node*);
 
             static Node* deepCopy(Node*);
-
-            // The Node argument here must be an internal node and so must it's left child
-            static void rotateRight(Node* &);
-            // The Node argument here must be an internal node and so must it's right child
-            static void rotateLeft(Node* &);
     };
 
     template < typename T1, typename T2 >
@@ -69,8 +64,7 @@ namespace Containers
     {
         Key key;
         Item item;
-        Node* leftChild = nullptr;
-        Node* rightChild = nullptr;
+        Node* next = nullptr;
 
         Node(Key keyIn, Item itemIn)
         {
@@ -98,15 +92,10 @@ namespace Containers
             current->item = item;
             return false;
         }
-        else if (key < current->key)
+        else
         {
-            return insertRec(key, item, current->leftChild);
+            return insertRec(key, item, current->next);
         }
-        else if (key > current-> key)
-        {
-            return insertRec(key, item, current->rightChild);
-        }
-        assert(false);
     }
 
     template < typename T1, typename T2 >
@@ -122,19 +111,14 @@ namespace Containers
         {
             return nullptr;
         }
-        if (node->key == key)
+        else if (node->key == key)
         {
             return &node->item;
         }
-        if (key < node->key)
+        else
         {
-            return lookupRec(key, node->leftChild);
+            return lookupRec(key, node->next);
         }
-        else if (key > node->key)
-        {
-            return lookupRec(key, node->rightChild);
-        }
-        assert(false);
     }
 
     // TODO: Would it not be easier to make a "lookupNode" function which lookups and returns whole node?
@@ -152,62 +136,15 @@ namespace Containers
         if (isLeaf(current))
             return false;
 
-        if (current->key == key)
+        else if (current->key == key)
         {
-            if (isLeaf(current->leftChild) and isLeaf(current->rightChild))
-            {
-                delete current;
-                current = nullptr;
-            }
-            else if (isLeaf(current->leftChild) != isLeaf(current->rightChild))
-            {
-                Node* child;
-                if (current->leftChild)
-                {
-                    child = current->leftChild;
-                }
-                else
-                {
-                    child = current->rightChild;
-                }
-                
-                delete current;
-                current = child;
-            }
-            else if (current->leftChild and current->rightChild)
-            {
-                Dictionary<T1, T2>::Node* newNode = detachMinimumNode(current->rightChild);
-                newNode->leftChild = current->leftChild;
-                newNode->rightChild = current->rightChild;
-
-                delete current;
-                current = newNode;
-            }
+            delete current;
+            current = nullptr;
             return true;
-        }
-        else if (key < current->key)
-        {
-            return removeRec(key, current->leftChild);
-        }
-        else if (key > current-> key)
-        {
-            return removeRec(key, current->rightChild);
-        }
-        assert(false);
-    }
-
-    template < typename T1, typename T2 >
-    typename Dictionary<T1, T2>::Node* Dictionary<T1, T2>::detachMinimumNode(Node* & node)
-    {
-        if (isLeaf(node->leftChild))
-        {
-            Dictionary<T1, T2>::Node* nodeCopy = new Node(node->key, node->item);
-            removeRec(node->key, node);
-            return nodeCopy;
         }
         else
         {
-            return detachMinimumNode(node->leftChild);
+            return removeRec(key, current->next);
         }
     }
 
@@ -216,29 +153,8 @@ namespace Containers
     {
         if (isLeaf(node))
             return;
-        displayEntriesRec(node->leftChild, os);
+        displayEntriesRec(node->next, os);
         os << node->key << ' ' << node->item << '\n';
-        displayEntriesRec(node->rightChild, os);
-    }
-
-    template < typename T1, typename T2 >
-    void Dictionary<T1, T2>::displayTree()
-    {
-        displayTreeRec(root);
-    }
-
-    template < typename T1, typename T2 >
-    void Dictionary<T1, T2>::displayTreeRec(Node* node, int depth)
-    {
-        if (isLeaf(node))
-        {
-            std::cout << std::string(depth, '.') << '*' << '\n';
-            return;
-        }
-        std::cout << std::string(depth, '.') << node->item << '\n';
-        int nextDepth = ++depth;
-        displayTreeRec(node->leftChild, nextDepth);
-        displayTreeRec(node->rightChild, nextDepth);
     }
 
     template < typename T1, typename T2 >
@@ -253,13 +169,9 @@ namespace Containers
         if (isLeaf(node))
             delete node;
             return;
-        if (not isLeaf(node->leftChild))
+        if (not isLeaf(node->next))
         {
-            deepDelete(node->leftChild);
-        }
-        if (not isLeaf(node->rightChild))
-        {
-            deepDelete(node->rightChild);
+            deepDelete(node->next);
         }
         delete node;
     }
@@ -271,43 +183,11 @@ namespace Containers
             return nullptr;
 
         Node* node = new Node(original->key, original->item);
-        if (not isLeaf(original->leftChild))
+        if (not isLeaf(original->next))
         {
-            node->leftChild = deepCopy(original->leftChild);
-        }
-        if (not isLeaf(original->rightChild))
-        {
-            node->rightChild = deepCopy(original->rightChild);
+            node->next = deepCopy(original->next);
         }
         return node;
-    }
-
-    template < typename T1, typename T2 >
-    void Dictionary<T1, T2>::rotateRight(Node* & localRoot)
-    {
-        Node* b = localRoot;
-        assert(not isLeaf(b));
-        Node* a = b->leftChild;
-        assert(not isLeaf(a));
-        Node * beta = a->rightChild;
-
-        localRoot = a;
-        a->rightChild = b;
-        b->leftChild = beta;
-    }
-
-    template < typename T1, typename T2 >
-    void Dictionary<T1, T2>::rotateLeft(Node* & localRoot)
-    {
-        Node* a = localRoot;
-        assert(not isLeaf(a));
-        Node* b = a->rightChild;
-        assert(not isLeaf(b));
-        Node * beta = b->leftChild;
-
-        localRoot = b;
-        b->leftChild = a;
-        a->rightChild = beta;
     }
 
     template < typename T1, typename T2 >
