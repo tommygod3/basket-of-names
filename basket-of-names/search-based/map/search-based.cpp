@@ -57,6 +57,6 @@ void SearchBased::printResults()
 {
     for (Name name : this->result)
     {
-        std::cout << name << std::endl;
+        std::cout << name << "\n";
     }
 }
