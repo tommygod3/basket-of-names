@@ -27,4 +27,5 @@ class SearchBased
         void extendResultWest(Name startingPoint);
         void extendResultEast(Name startingPoint);
         bool isOnEnd(Name name, NameDict& nameDict);
+        void printResults();
 };

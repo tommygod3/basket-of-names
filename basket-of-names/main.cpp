@@ -1,6 +1,9 @@
 #include "search-based.h"
 
 
-int main() {
-    SearchBased("/home/tgodfrey/ase/ase-cswk1/basket-of-names/test-data/20/input-papers-20.txt");
+int main(int argc, char *argv[]) {
+    if (argc == 2)
+    {
+        SearchBased(argv[1]).printResults();
+    }
 }

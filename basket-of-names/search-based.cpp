@@ -8,12 +8,6 @@ SearchBased::SearchBased(std::string filename)
 
     this->extendResultWest(firstName);
     if (!isOnEnd(firstName, this->eastInput)) this->extendResultEast(this->eastInput.at(firstName));
-
-    for (Name name : this->result)
-    {
-        std::cout << name << std::endl;
-    }
-
 }
 
 void SearchBased::setInputDicts(std::string filename)
@@ -57,4 +51,12 @@ void SearchBased::extendResultEast(Name name)
 bool SearchBased::isOnEnd(Name name, NameDict& nameDict)
 {
     return nameDict.find(name) == nameDict.end();
+}
+
+void SearchBased::printResults()
+{
+    for (Name name : this->result)
+    {
+        std::cout << name << std::endl;
+    }
 }
