@@ -2,7 +2,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <list>
 #include <utility>
@@ -12,7 +12,7 @@ class SearchBased
 {
     public:
         using Name = std::string;
-        using NameDict = std::map<Name, Name>;
+        using NameDict = std::unordered_map<Name, Name>;
         
         std::string filename;
         std::list<Name> result;
