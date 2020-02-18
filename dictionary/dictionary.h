@@ -12,9 +12,6 @@ namespace Containers
         private:
             struct Node;
 
-        template < typename TF1, typename TF2 >
-        friend std::ostream & operator<<(std::ostream & os, const Dictionary<TF1, TF2> & Dictionary);
-
         public:
             // Default Constructor
             Dictionary() = default;
@@ -33,8 +30,6 @@ namespace Containers
 
             bool insert(Key, Item);
 
-            void displayTree();
-
             bool remove(Key);
 
         private:
@@ -44,20 +39,12 @@ namespace Containers
             static Item* lookupRec(Key, Node*);
             static bool insertRec(Key, Item, Node* &);
 
-            static void displayEntriesRec(Node* node, std::ostream & os);
-            void displayTreeRec(Node* node, int depth = 0);
-
             static bool removeRec(Key, Node* &);
-
-            static Node* detachMinimumNode(Node* &);
 
             static void deepDelete(Node*);
 
             static Node* deepCopy(Node*);
     };
-
-    template < typename T1, typename T2 >
-    std::ostream & operator<<(std::ostream & os, const Dictionary<T1, T2> & Dictionary);
 
     template < typename T1, typename T2 >
     struct Dictionary<T1, T2>::Node
@@ -149,15 +136,6 @@ namespace Containers
     }
 
     template < typename T1, typename T2 >
-    void Dictionary<T1, T2>::displayEntriesRec(Node* node, std::ostream & os)
-    {
-        if (isLeaf(node))
-            return;
-        displayEntriesRec(node->next, os);
-        os << node->key << ' ' << node->item << '\n';
-    }
-
-    template < typename T1, typename T2 >
     bool Dictionary<T1, T2>::isLeaf(Node* node)
     {
         return node == nullptr;
@@ -230,10 +208,4 @@ namespace Containers
         deepDelete(root);
     }
 
-    template < typename T1, typename T2 >
-    std::ostream & operator<<(std::ostream & os, const Dictionary<T1, T2> & Dictionary)
-    {
-        Dictionary.displayEntriesRec(Dictionary.root, os);
-        return os;
-    }
 }
