@@ -32,6 +32,12 @@ namespace Containers
 
             bool remove(Key);
 
+            template < typename Function >
+            bool removeIf(Function);
+
+            template < typename Function >
+            bool removeIfRec(Node* & current, Function f);
+
         private:
             Node* root = nullptr;
             static bool isLeaf(Node*);
@@ -108,8 +114,6 @@ namespace Containers
         }
     }
 
-    // TODO: Would it not be easier to make a "lookupNode" function which lookups and returns whole node?
-    // It would simplify a few functions.
     template < typename T1, typename T2 >
     bool Dictionary<T1, T2>::remove(Key key)
     {
@@ -125,8 +129,9 @@ namespace Containers
 
         else if (current->key == key)
         {
+            Node* next = current->next;
             delete current;
-            current = nullptr;
+            current = next;
             return true;
         }
         else
@@ -206,6 +211,29 @@ namespace Containers
     Dictionary<T1, T2>::~Dictionary()
     {
         deepDelete(root);
+    }
+
+    template < typename T1, typename T2 >
+    template < typename Function >
+    bool Dictionary<T1, T2>::removeIf(Function f)
+    {
+        return removeIfRec(root, f);
+    }
+
+    template < typename T1, typename T2 >
+    template < typename Function >
+    bool Dictionary<T1, T2>::removeIfRec(Node* & current, Function f)
+    {
+        // Key not in Tree
+        if (isLeaf(current))
+            return false;
+
+        bool nextDeleted = removeIfRec(current->next, f);
+        if (f(current->key))
+        {
+            return remove(current->key);
+        }
+        return nextDeleted;
     }
 
 }
