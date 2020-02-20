@@ -23,8 +23,9 @@ class Serial
 
 
     public:
+        Serial() = default;
         Serial(std::string filename);
         void setInputList(std::string filename);
-        void createResult();
+        void createResults();
         void printResults();
 };

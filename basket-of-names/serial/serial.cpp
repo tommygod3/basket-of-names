@@ -4,7 +4,6 @@ Serial::Serial(std::string filename)
 {
     this->filename = filename;
     this->setInputList(filename);
-    this->createResult();
 }
 
 void Serial::setInputList(std::string filename)
@@ -24,7 +23,7 @@ void Serial::setInputList(std::string filename)
     }
 }
 
-void Serial::createResult()
+void Serial::createResults()
 {
     NameList firstSorted = this->input;
     firstSorted.sort();
