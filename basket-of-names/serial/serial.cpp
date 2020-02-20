@@ -38,17 +38,10 @@ void Serial::createResult()
     // (xi, xi+t)
     NameList F;
     // (i, xi)
-    std::list<std::pair<int, Name>> G;
+    std::list<std::pair<unsigned long, Name>> G;
     // Number of names
-    const int N = this->input.size() + 1;
+    const unsigned long N = this->input.size() + 1;
 
-    // Print and reset its
-    while (firstIter != firstSorted.end() && secondIter != secondSorted.end())
-    {
-        std::cout << firstIter->first << " " << firstIter->second << "      " << secondIter->first << " " << secondIter->second << std::endl;
-        firstIter++;
-        secondIter++;
-    }
     firstIter = firstSorted.begin();
     secondIter = secondSorted.begin();
 
@@ -56,12 +49,15 @@ void Serial::createResult()
     while (firstIter != firstSorted.end() && secondIter != secondSorted.end())
     {
         if (firstIter->first == secondIter->second)
-            F.push_back(std::make_pair(firstIter->second, secondIter->first));
+            F.push_back(std::make_pair(secondIter->first, firstIter->second));
         else
         {
-            firstIter++;//THIS IS MISSING FIRST ONE
+            
+            firstIter++;
             if (firstIter->first == secondIter->second)
-                F.push_back(std::make_pair(firstIter->second, secondIter->first));
+            {
+                F.push_back(std::make_pair(secondIter->first, firstIter->second));
+            }
             else
             {
                 firstIter--;
@@ -69,39 +65,26 @@ void Serial::createResult()
                 G.push_back(std::make_pair(N, secondIter->second));
                 secondIter++;
                 if (firstIter->first == secondIter->second)
-                    F.push_back(std::make_pair(firstIter->second, secondIter->first));
+                    F.push_back(std::make_pair(secondIter->first, firstIter->second));
             }
         }
         firstIter++;
         secondIter++;
     }
 
-
-    std::cout << "F:" << std::endl;
-    for (auto i : F)
-    {
-        std::cout << i.first << " " << i.second << std::endl;
-    }
-
-    std::cout << "G:" << std::endl;
-    for (auto i : G)
-    {
-        std::cout << i.first << " " << i.second << std::endl;
-    }
-
     // Repeat inductively
     NameList FDash, H;
-    std::list<std::pair<int, Name>> GDash;
-    unsigned int t = 2;
+    std::list<std::pair<unsigned long, Name>> GDash;
+    unsigned long t = 2;
     while (t < N)
     {
         H = F;
         H.sort();
         F.sort([](const NamePair &a, const NamePair &b) {return a.second < b.second;});
-        G.sort([](const std::pair<int, Name> &a, const std::pair<int, Name> &b) {return a.second < b.second;});
+        G.sort([](const std::pair<unsigned long, Name> &a, const std::pair<unsigned long, Name> &b) {return a.second < b.second;});
 
         NameList::iterator FIter = F.begin();
-        std::list<std::pair<int, Name>>::iterator GIter = G.begin();
+        std::list<std::pair<unsigned long, Name>>::iterator GIter = G.begin();
         NameList::iterator HIter = H.begin();
 
 
@@ -129,9 +112,9 @@ void Serial::createResult()
             }
         }
 
-        GDash.sort([](const std::pair<int, Name> &a, const std::pair<int, Name> &b) {return a.second < b.second;});
+        GDash.sort([](const std::pair<unsigned long, Name> &a, const std::pair<unsigned long, Name> &b) {return a.second < b.second;});
 
-        for (std::pair<int, Name> indexedName : G)
+        for (std::pair<unsigned long, Name> indexedName : G)
         {
             GDash.push_back(indexedName);
         }
@@ -147,7 +130,7 @@ void Serial::createResult()
 
     G.sort();
 
-    for (std::pair<int, Name> indexedName : G)
+    for (std::pair<unsigned long, Name> indexedName : G)
     {
         this->result.push_back(indexedName.second);
     }
