@@ -150,8 +150,10 @@ namespace Containers
     void Dictionary<T1, T2>::deepDelete(Node* node)
     {
         if (isLeaf(node))
+        {
             delete node;
             return;
+        }
         if (not isLeaf(node->next))
         {
             deepDelete(node->next);
