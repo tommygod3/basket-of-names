@@ -39,14 +39,6 @@ namespace Containers
             Node* root = nullptr;
             static bool isLeaf(Node*);
 
-            static Item* lookupRec(Key, Node*);
-            static bool insertRec(Key, Item, Node* &);
-
-            static bool removeRec(Key, Node* &);
-
-            template < typename Function >
-            bool removeIfRec(Node* & current, Function f);
-
             static void deepDelete(Node*);
 
             static Node* deepCopy(Node*);
@@ -69,75 +61,51 @@ namespace Containers
     template < typename T1, typename T2 >
     bool Dictionary<T1, T2>::insert(Key key, Item item)
     {
-        return insertRec(key, item, root);
-    }
-
-    template < typename T1, typename T2 >
-    bool Dictionary<T1, T2>::insertRec(Key key, Item item, Node* & current)
-    {
-        if (isLeaf(current))
+        Node** current = &root;
+        while (!isLeaf(*current))
         {
-            current = new Node(key, item);
-            return true;
+            if ((*current)->key == key)
+            {
+                (*current)->item = item;
+                return false;
+            }
+            current = &(*current)->next;
         }
-        else if (current->key == key)
-        {
-            current->item = item;
-            return false;
-        }
-        else
-        {
-            return insertRec(key, item, current->next);
-        }
+        *current = new Node(key, item);
+        return true;
     }
 
     template < typename T1, typename T2 >
     typename Dictionary<T1, T2>::Item* Dictionary<T1, T2>::lookup(Key key)
     {
-        return lookupRec(key, root);
-    }
-
-    template < typename T1, typename T2 >
-    typename Dictionary<T1, T2>::Item* Dictionary<T1, T2>::lookupRec(Key key, Node* node)
-    {
-        if (isLeaf(node))
+        Node** current = &root;
+        while (!isLeaf(*current))
         {
-            return nullptr;
+            if ((*current)->key == key)
+            {
+                return &(*current)->item;
+            }
+            current = &(*current)->next;
         }
-        else if (node->key == key)
-        {
-            return &node->item;
-        }
-        else
-        {
-            return lookupRec(key, node->next);
-        }
+        return nullptr;
     }
 
     template < typename T1, typename T2 >
     bool Dictionary<T1, T2>::remove(Key key)
     {
-        return removeRec(key, root);
-    }
-
-    template < typename T1, typename T2 >
-    bool Dictionary<T1, T2>::removeRec(Key key, Node* & current)
-    {
-        // Key not in Tree
-        if (isLeaf(current))
-            return false;
-
-        else if (current->key == key)
+        Node** current = &root;
+        while (!isLeaf(*current))
         {
-            Node* next = current->next;
-            delete current;
-            current = next;
-            return true;
+            if ((*current)->key == key)
+            {
+                Node* next = (*current)->next;
+                delete *current;    
+                *current = next;
+                return true;
+            }
+            current = &(*current)->next;
         }
-        else
-        {
-            return removeRec(key, current->next);
-        }
+        return false;
     }
 
     template < typename T1, typename T2 >
@@ -219,23 +187,20 @@ namespace Containers
     template < typename Function >
     bool Dictionary<T1, T2>::removeIf(Function f)
     {
-        return removeIfRec(root, f);
-    }
-
-    template < typename T1, typename T2 >
-    template < typename Function >
-    bool Dictionary<T1, T2>::removeIfRec(Node* & current, Function f)
-    {
-        // Key not in Tree
-        if (isLeaf(current))
-            return false;
-
-        bool nextDeleted = removeIfRec(current->next, f);
-        if (f(current->key))
+        Node** current = &root;
+        bool deleted = false;
+        while (!isLeaf(*current))
         {
-            return remove(current->key);
+            if (f((*current)->key))
+            {
+                Node* next = (*current)->next;
+                delete *current;    
+                *current = next;
+                deleted = true;
+            }
+            current = &(*current)->next;
         }
-        return nextDeleted;
+        return deleted;
     }
 
 }
