@@ -35,9 +35,6 @@ namespace Containers
             template < typename Function >
             bool removeIf(Function);
 
-            template < typename Function >
-            bool removeIfRec(Node* & current, Function f);
-
         private:
             Node* root = nullptr;
             static bool isLeaf(Node*);
@@ -46,6 +43,9 @@ namespace Containers
             static bool insertRec(Key, Item, Node* &);
 
             static bool removeRec(Key, Node* &);
+
+            template < typename Function >
+            bool removeIfRec(Node* & current, Function f);
 
             static void deepDelete(Node*);
 
