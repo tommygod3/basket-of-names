@@ -4,8 +4,11 @@ SearchBased::SearchBased(std::string filename)
 {
     this->filename = filename;
     this->setInputDicts(filename);
-    Name firstName = this->westInput.begin()->first;
+}
 
+void SearchBased::createResults()
+{
+    Name firstName = this->westInput.begin()->first;
     this->extendResultWest(firstName);
     if (!isOnEnd(firstName, this->eastInput)) this->extendResultEast(this->eastInput.at(firstName));
 }

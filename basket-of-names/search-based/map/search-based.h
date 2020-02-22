@@ -24,6 +24,7 @@ class SearchBased
     public:
         SearchBased(std::string filename);
         void setInputDicts(std::string filename);
+        void createResults();
         void extendResultWest(Name startingPoint);
         void extendResultEast(Name startingPoint);
         bool isOnEnd(Name name, NameDict& nameDict);

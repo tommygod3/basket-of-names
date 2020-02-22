@@ -4,8 +4,11 @@ SearchBasedList::SearchBasedList(std::string filename)
 {
     this->filename = filename;
     this->setInputDicts(filename);
-    Name firstName = this->westInput.begin()->first;
+}
 
+void SearchBasedList::createResults()
+{
+    Name firstName = this->westInput.begin()->first;
     this->extendResultWest(firstName);
     if (!isOnEnd(firstName, this->eastInput)) this->extendResultEast(*findInDict(firstName, eastInput));
 }

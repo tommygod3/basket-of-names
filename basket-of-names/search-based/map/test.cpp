@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "serial.h"
+#include "search-based.h"
 
 // Timing code from NTU:
 
@@ -20,11 +20,11 @@ using std::chrono::duration_cast;
  */
 milliseconds timingTest(std::string filename)
 {
-    Serial serial = Serial(filename);
+    SearchBased searchBased = SearchBased(filename);
     
     steady_clock::time_point startTime = steady_clock::now();
 
-    serial.createResults();
+    searchBased.createResults();
 
     steady_clock::time_point finishTime = steady_clock::now();
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         }
 
         std::ofstream outfile;
-        outfile.open("serial-results.csv");
+        outfile.open("search-based-results.csv");
         outfile << "filename,ms" << "\n";
         for (auto & item : results)
         {

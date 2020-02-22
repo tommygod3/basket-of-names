@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "serial.h"
+#include "search-based-list.h"
 
 // Timing code from NTU:
 
@@ -20,11 +20,11 @@ using std::chrono::duration_cast;
  */
 milliseconds timingTest(std::string filename)
 {
-    Serial serial = Serial(filename);
+    SearchBasedList searchBasedList = SearchBasedList(filename);
     
     steady_clock::time_point startTime = steady_clock::now();
 
-    serial.createResults();
+    searchBasedList.createResults();
 
     steady_clock::time_point finishTime = steady_clock::now();
 
@@ -46,7 +46,9 @@ int main(int argc, char *argv[]) {
 
         for(auto& p: fs::recursive_directory_iterator(testDataPath))
         {
-            if (p.path().string().find("input") != std::string::npos)
+            if (p.path().string().find("input") != std::string::npos
+                && p.path().string().find("3M") == std::string::npos
+                && p.path().string().find("2M") == std::string::npos)
             {
                 std::cout << p.path() << '\n';
                 std::string filename = p.path().string();
@@ -55,7 +57,7 @@ int main(int argc, char *argv[]) {
         }
 
         std::ofstream outfile;
-        outfile.open("serial-results.csv");
+        outfile.open("search-based-list-results.csv");
         outfile << "filename,ms" << "\n";
         for (auto & item : results)
         {
