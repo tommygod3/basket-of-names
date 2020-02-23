@@ -75,12 +75,12 @@ void Serial::createResults()
     NameList FDash, H;
     std::list<std::pair<unsigned long, Name>> GDash;
     unsigned long t = 2;
+    G.sort([](const std::pair<unsigned long, Name> &a, const std::pair<unsigned long, Name> &b) {return a.second < b.second;});
     while (t < N)
     {
         H = F;
         H.sort();
         F.sort([](const NamePair &a, const NamePair &b) {return a.second < b.second;});
-        G.sort([](const std::pair<unsigned long, Name> &a, const std::pair<unsigned long, Name> &b) {return a.second < b.second;});
 
         NameList::iterator FIter = F.begin();
         std::list<std::pair<unsigned long, Name>>::iterator GIter = G.begin();
@@ -113,10 +113,7 @@ void Serial::createResults()
 
         GDash.sort([](const std::pair<unsigned long, Name> &a, const std::pair<unsigned long, Name> &b) {return a.second < b.second;});
 
-        for (std::pair<unsigned long, Name> indexedName : G)
-        {
-            GDash.push_back(indexedName);
-        }
+        GDash.merge(G, [](const std::pair<unsigned long, Name> &a, const std::pair<unsigned long, Name> &b) {return a.second < b.second;});
 
         t = 2 * t;
         F = FDash;
