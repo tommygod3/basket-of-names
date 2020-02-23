@@ -26,6 +26,7 @@ namespace Containers
             // Destructor
             ~Dictionary();
 
+            // Member functions no longer use recursion to avoid stack overflow
             Item* lookup(Key);
 
             bool insert(Key, Item);
@@ -59,6 +60,25 @@ namespace Containers
     };
 
     template < typename T1, typename T2 >
+    typename Dictionary<T1, T2>::Item* Dictionary<T1, T2>::lookup(Key key)
+    {
+        // current is a pointer to the root pointer.
+        // This is useful for incrementing our current pointer
+        // without changing the data that is in the tree
+        // but while retaining a way to change the data if needed
+        Node** current = &root;
+        while (!isLeaf(*current))
+        {
+            if ((*current)->key == key)
+            {
+                return &(*current)->item;
+            }
+            current = &(*current)->next;
+        }
+        return nullptr;
+    }
+
+    template < typename T1, typename T2 >
     bool Dictionary<T1, T2>::insert(Key key, Item item)
     {
         Node** current = &root;
@@ -73,21 +93,6 @@ namespace Containers
         }
         *current = new Node(key, item);
         return true;
-    }
-
-    template < typename T1, typename T2 >
-    typename Dictionary<T1, T2>::Item* Dictionary<T1, T2>::lookup(Key key)
-    {
-        Node** current = &root;
-        while (!isLeaf(*current))
-        {
-            if ((*current)->key == key)
-            {
-                return &(*current)->item;
-            }
-            current = &(*current)->next;
-        }
-        return nullptr;
     }
 
     template < typename T1, typename T2 >
