@@ -122,28 +122,31 @@ namespace Containers
     template < typename T1, typename T2 >
     void Dictionary<T1, T2>::deepDelete(Node* node)
     {
-        if (isLeaf(node))
+        Node** current = &node;
+        while (!isLeaf(*current))
         {
-            delete node;
-            return;
+            Node* next = (*current)->next;
+            delete *current;
+            *current = next;
         }
-        if (not isLeaf(node->next))
-        {
-            deepDelete(node->next);
-        }
-        delete node;
     }
 
     template < typename T1, typename T2 >
-    typename Dictionary<T1, T2>::Node* Dictionary<T1, T2>::deepCopy(Node* original)
+    typename Dictionary<T1, T2>::Node* Dictionary<T1, T2>::deepCopy(Node* original)//TODO
     {
         if (isLeaf(original))
             return nullptr;
 
         Node* node = new Node(original->key, original->item);
-        if (not isLeaf(original->next))
+
+        Node** current = &original;
+        Node** currentNew = &node;
+        while (!isLeaf((*current)->next))
         {
-            node->next = deepCopy(original->next);
+            Node* next = (*current)->next;
+            (*currentNew)->next = new Node(next->key, next->item);
+            current = &(*current)->next;
+            currentNew = &(*currentNew)->next;
         }
         return node;
     }
